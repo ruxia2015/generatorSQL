@@ -180,14 +180,14 @@ public class MysqlMgr
         sb.append("`" + tempBean.getColumnName() + "`");
         sb.append(" " + tempBean.getTypeName());
         
-        if (tempBean.getScale() != 0)
-        {
+        if("datetime".equalsIgnoreCase(tempBean.getTypeName())  
+        		|| "date".equalsIgnoreCase(tempBean.getTypeName()) ){
+        	
+        } else if (tempBean.getScale() != 0 ){
             sb.append("(" + tempBean.getSize() + "," + tempBean.getScale()
                     + ")");
             
-        }
-        else
-        {
+        } else {
             sb.append("(" + tempBean.getSize() + ")");
             
         }
