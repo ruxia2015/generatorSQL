@@ -7,10 +7,8 @@ import generatorSQLScript.util.MysqlUtil;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 public class MysqlMgr
 {
