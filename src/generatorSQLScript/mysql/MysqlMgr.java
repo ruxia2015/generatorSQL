@@ -15,13 +15,13 @@ public class MysqlMgr
     
     /**
      *
-     * <¹¦ÄÜÏêÏ¸ÃèÊö>
+     * <åŠŸèƒ½è¯¦ç»†æè¿°>
      * @param newUrl
-     * @param oldUrl Ê¹oldUrlºÍnewUrlÒ»Ñù
+     * @param oldUrl ä½¿oldUrlå’ŒnewUrlä¸€æ ·
      * 
-     * @return void [·µ»ØÀàĞÍËµÃ÷]
-     * @exception throws [Î¥ÀıÀàĞÍ] [Î¥ÀıËµÃ÷]
-     * @see [Àà¡¢Àà#·½·¨¡¢Àà#³ÉÔ±]
+     * @return void [è¿”å›ç±»å‹è¯´æ˜]
+     * @exception throws [è¿ä¾‹ç±»å‹] [è¿ä¾‹è¯´æ˜]
+     * @see [ç±»ã€ç±»#æ–¹æ³•ã€ç±»#æˆå‘˜]
      */
     public void compareDb(String newUrl, String oldUrl, String outputPath)
     {
@@ -51,7 +51,7 @@ public class MysqlMgr
         System.out.println("waitCompareTables  "+waitCompareTables.size());
         System.out.println("waitRemove  "+oldTables.size());
         
-        //´´½¨±íµÄsql
+        //åˆ›å»ºè¡¨çš„sql
         for (String temp : waitAddTables)
         {
             String fileName = outputPath + "//" + temp.toUpperCase() + ".tab";
@@ -59,7 +59,7 @@ public class MysqlMgr
             FileUtil.writeFile(fileName, sql);
         }
         
-        //ĞŞ¸Ä±íµÄsql
+        //ä¿®æ”¹è¡¨çš„sql
         int index = 1;
         for (String temp : waitCompareTables)
         {
@@ -81,9 +81,9 @@ public class MysqlMgr
         for(String temp:oldTables){
                 sb.append(temp+"\n");
         }
-        FileUtil.writeFile(outputPath+"//ĞèÒªÉ¾³ıµÄ±í.sql", sb.toString());
+        FileUtil.writeFile(outputPath+"//éœ€è¦åˆ é™¤çš„è¡¨.sql", sb.toString());
         
-        System.out.println("Íê³É");
+        System.out.println("å®Œæˆ");
         try
         {
             
@@ -97,16 +97,16 @@ public class MysqlMgr
     }
     
     /**
-     * Éú³ÉÌí¼Ó±íµÄsql Ö»¹ÜÌí¼ÓµÄÁĞ
-     * <¹¦ÄÜÏêÏ¸ÃèÊö>
+     * ç”Ÿæˆæ·»åŠ è¡¨çš„sql åªç®¡æ·»åŠ çš„åˆ—
+     * <åŠŸèƒ½è¯¦ç»†æè¿°>
      * @param tableName
      * @param conNew
      * @param conOld
-     * @return [²ÎÊıËµÃ÷]
+     * @return [å‚æ•°è¯´æ˜]
      * 
-     * @return String [·µ»ØÀàĞÍËµÃ÷]
-     * @exception throws [Î¥ÀıÀàĞÍ] [Î¥ÀıËµÃ÷]
-     * @see [Àà¡¢Àà#·½·¨¡¢Àà#³ÉÔ±]
+     * @return String [è¿”å›ç±»å‹è¯´æ˜]
+     * @exception throws [è¿ä¾‹ç±»å‹] [è¿ä¾‹è¯´æ˜]
+     * @see [ç±»ã€ç±»#æ–¹æ³•ã€ç±»#æˆå‘˜]
      */
     public String generatorEditTableSql(String tableName, String tableName2,
             Connection conNew, Connection oldCon)
@@ -120,7 +120,7 @@ public class MysqlMgr
         StringBuffer sql = new StringBuffer();
         for (String colName : newMap.keySet())
         {
-            //ĞÂÔö×Ö¶Î
+            //æ–°å¢å­—æ®µ
             if (!oldMap.containsKey(colName))
             {
                 sql.append("alter table " + tableName2 + " add "
@@ -140,7 +140,7 @@ public class MysqlMgr
         
         
         if(oldMap.size()>0){
-            sql.append("\n\n\n#ÒÔÏÂÊÇ¶à³öµÄ×Ö¶Î");            
+            sql.append("\n\n\n#ä»¥ä¸‹æ˜¯å¤šå‡ºçš„å­—æ®µ");            
         }
         
         for(String key:oldMap.keySet()){            
@@ -153,16 +153,16 @@ public class MysqlMgr
     }
     
     /**
-     * Éú³ÉÌí¼Ó±íµÄsql Ö»¹ÜÌí¼ÓµÄÁĞ
-     * <¹¦ÄÜÏêÏ¸ÃèÊö>
+     * ç”Ÿæˆæ·»åŠ è¡¨çš„sql åªç®¡æ·»åŠ çš„åˆ—
+     * <åŠŸèƒ½è¯¦ç»†æè¿°>
      * @param tableName
      * @param conNew
      * @param conOld
-     * @return [²ÎÊıËµÃ÷]
+     * @return [å‚æ•°è¯´æ˜]
      * 
-     * @return String [·µ»ØÀàĞÍËµÃ÷]
-     * @exception throws [Î¥ÀıÀàĞÍ] [Î¥ÀıËµÃ÷]
-     * @see [Àà¡¢Àà#·½·¨¡¢Àà#³ÉÔ±]
+     * @return String [è¿”å›ç±»å‹è¯´æ˜]
+     * @exception throws [è¿ä¾‹ç±»å‹] [è¿ä¾‹è¯´æ˜]
+     * @see [ç±»ã€ç±»#æ–¹æ³•ã€ç±»#æˆå‘˜]
      */
     public boolean compareTableIsSame(String tableName, 
             Connection conNew, Connection oldCon)
@@ -211,16 +211,16 @@ public class MysqlMgr
     }
     
     /**
-     * Éú³ÉÌí¼Ó±íµÄsql
-     * <¹¦ÄÜÏêÏ¸ÃèÊö>
+     * ç”Ÿæˆæ·»åŠ è¡¨çš„sql
+     * <åŠŸèƒ½è¯¦ç»†æè¿°>
      * @param tableName
      * @param conNew
      * @param conOld
-     * @return [²ÎÊıËµÃ÷]
+     * @return [å‚æ•°è¯´æ˜]
      * 
-     * @return String [·µ»ØÀàĞÍËµÃ÷]
-     * @exception throws [Î¥ÀıÀàĞÍ] [Î¥ÀıËµÃ÷]
-     * @see [Àà¡¢Àà#·½·¨¡¢Àà#³ÉÔ±]
+     * @return String [è¿”å›ç±»å‹è¯´æ˜]
+     * @exception throws [è¿ä¾‹ç±»å‹] [è¿ä¾‹è¯´æ˜]
+     * @see [ç±»ã€ç±»#æ–¹æ³•ã€ç±»#æˆå‘˜]
      */
     public String generatorCreateTableSql(String tableName, Connection conNew)
     {
@@ -232,8 +232,8 @@ public class MysqlMgr
     
     public static void main(String[] args)
     {
-        String url = "jdbc:mysql://120.24.75.25:3306/yufex_wtms_db?user=pqy&password=pqy";
-        String url2 = "jdbc:mysql://127.0.0.1:3306/yufex_wtms_db?user=test&password=1234";
+        String url = "jdbc:mysql://127.0.0.1:3306/data1?user=test&password=1234";
+        String url2 = "jdbc:mysql://127.0.0.1:3306/data2?user=test&password=1234";
 //        String url = "jdbc:mysql://183.230.40.64:3306/matdb_test?user=mattest&password=HUw21z$jzs";
         Connection connection = JdbcUtil.connect(url);
         
