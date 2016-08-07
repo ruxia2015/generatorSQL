@@ -55,8 +55,8 @@ public class Main
       
       public static void main(String args[]){
        // String exec = exec("183.230.40.64", "platform2", "%Lsf3rjjs2", 600, "sleep 20;ls;");
-        String exec = exec("183.230.40.64", "platform2", "%Lsf3rjjs2", 600, "ping 192.168.41.114 ");
-        System.out.println(exec);   
+       // String exec = exec("183.230.40.64", "platform2", "%Lsf3rjjs2", 600, "ping 192.168.41.114 ");
+      //  System.out.println(exec);   
       }
     
     

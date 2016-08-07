@@ -60,14 +60,21 @@ public class MysqlMgr
         }
         
         //修改表的sql
+        int index = 1;
         for (String temp : waitCompareTables)
         {
+            System.out.println(index++ + "  " +temp);
+            
+            if(compareTableIsSame(temp,conNew,conOld)){
+                continue;
+            }
+            
             String fileName = outputPath + "//" + temp.toUpperCase() + ".sql";
             String sql = generatorEditTableSql(temp, temp, conNew, conOld);
-            FileUtil.writeFile(fileName, sql);                
-            if(sql!=null && !sql.trim().equals("")){
-                System.out.println(sql);
-            }
+            FileUtil.writeFile(fileName, sql);                 
+          /*  if(sql!=null && !sql.trim().equals("")){
+                System.out.println("  " + sql);
+            }*/
         }
         
         StringBuffer sb = new StringBuffer();
@@ -111,23 +118,23 @@ public class MysqlMgr
                 conNew);
         
         StringBuffer sql = new StringBuffer();
-        for (String nKey : newMap.keySet())
+        for (String colName : newMap.keySet())
         {
             //新增字段
-            if (!oldMap.containsKey(nKey))
+            if (!oldMap.containsKey(colName))
             {
                 sql.append("alter table " + tableName2 + " add "
-                        + getColStr(newMap.get(nKey)) + ";\r\n");
+                        + getColStr(newMap.get(colName)) + ";\r\n");
             }
             else
             {
-                if (!oldMap.get(nKey).toStr().equals(newMap.get(nKey).toStr()))
+                if (!oldMap.get(colName).toStr().equals(newMap.get(colName).toStr()))
                 {
                     sql.append("alter table " + tableName2 + " change `"
-                            + nKey + "`  " + getColStr(newMap.get(nKey))
+                            + colName + "`  " + getColStr(newMap.get(colName))
                             + ";\r\n");
                 }
-                oldMap.remove(nKey);
+                oldMap.remove(colName);
             }
         }
         
@@ -141,7 +148,7 @@ public class MysqlMgr
             
         }
         
-        System.out.println(sql.toString());
+       // System.out.println(sql.toString());
         return sql.toString();
     }
     
@@ -157,17 +164,18 @@ public class MysqlMgr
      * @exception throws [违例类型] [违例说明]
      * @see [类、类#方法、类#成员]
      */
-    public String generatorEditTableSql2(String tableName, String tableName2,
+    public boolean compareTableIsSame(String tableName, 
             Connection conNew, Connection oldCon)
     {
         
         String newtableSql = MysqlUtil.showCreateTable(conNew, tableName);
-        String oldTableSql = MysqlUtil.showCreateTable(oldCon, tableName2);
+        String oldTableSql = MysqlUtil.showCreateTable(oldCon, tableName);
         
-        System.out.println(newtableSql);
-        System.out.println(oldTableSql);
+       if(newtableSql.equalsIgnoreCase(oldTableSql)){
+           return true;
+       }
         
-        return null;
+        return false;
     }
     
     public String getColStr(MysqlColumnBean tempBean)
@@ -224,8 +232,8 @@ public class MysqlMgr
     
     public static void main(String[] args)
     {
-        String url = "jdbc:mysql://192.168.205.83:3306/matdb?user=matuser&password=123456";
-        String url2 = "jdbc:mysql://127.0.0.1:3306/matdb_zs?user=root&password=1234";
+        String url = "jdbc:mysql://120.24.75.25:3306/yufex_wtms_db?user=pqy&password=pqy";
+        String url2 = "jdbc:mysql://127.0.0.1:3306/yufex_wtms_db?user=test&password=1234";
 //        String url = "jdbc:mysql://183.230.40.64:3306/matdb_test?user=mattest&password=HUw21z$jzs";
         Connection connection = JdbcUtil.connect(url);
         

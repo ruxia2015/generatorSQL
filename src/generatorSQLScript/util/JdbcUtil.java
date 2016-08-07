@@ -86,7 +86,7 @@ public class JdbcUtil
     {
         Map<String, MysqlColumnBean> list = new HashMap<String, MysqlColumnBean>();
         
-        String sql = "select * from " + tableName;
+        String sql = "select * from " + tableName +" where 1 = 1";
         
         try
         {
@@ -143,6 +143,8 @@ public class JdbcUtil
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }finally{
+         
         }
         return list;
     }
