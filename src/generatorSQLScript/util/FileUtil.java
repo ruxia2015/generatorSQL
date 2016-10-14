@@ -29,7 +29,7 @@ public class FileUtil
                 
             }
             
-            System.out.println("        Ð´ÈëÄÚÈÝ ==>" + content);
+            System.out.println("   æ–‡ä»¶å†…å®¹æ˜¯ ==>" + content);
             
             FileWriter fileWritter = new FileWriter(file, false);
             BufferedWriter bufferWritter = new BufferedWriter(fileWritter);

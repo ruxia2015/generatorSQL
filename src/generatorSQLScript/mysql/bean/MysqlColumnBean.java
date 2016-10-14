@@ -37,7 +37,7 @@ public class MysqlColumnBean
         rs.append("nullable=" + nullable + "\n");
         rs.append("autoIncrement=" + autoIncrement + "\n");
         
-        return rs.toString();
+        return rs.toString().toUpperCase();
     }
     
     public Boolean getAutoIncrement()

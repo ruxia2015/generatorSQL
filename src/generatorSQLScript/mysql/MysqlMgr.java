@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MysqlMgr
-{
+public class MysqlMgr {
     
     /**
      *
@@ -23,8 +22,7 @@ public class MysqlMgr
      * @exception throws [违例类型] [违例说明]
      * @see [类、类#方法、类#成员]
      */
-    public void compareDb(String newUrl, String oldUrl, String outputPath)
-    {
+    public void compareDb(String newUrl, String oldUrl, String outputPath) {
         Connection conNew = JdbcUtil.connect(newUrl);
         Connection conOld = JdbcUtil.connect(oldUrl);
         
@@ -34,26 +32,21 @@ public class MysqlMgr
         List<String> waitAddTables = new ArrayList<String>();
         //  List<String> waitDelTables = new ArrayList<String>();
         List<String> waitCompareTables = new ArrayList<String>();
-        for (String newTable : newTables)
-        {
-            if (oldTables.contains(newTable))
-            {
+        for (String newTable : newTables) {
+            if (oldTables.contains(newTable)) {
                 waitCompareTables.add(newTable);
                 oldTables.remove(newTable);
-            }
-            else
-            {
+            } else {
                 waitAddTables.add(newTable);
             }
             
         }
-        System.out.println("waitAddTables  "+waitAddTables.size());
-        System.out.println("waitCompareTables  "+waitCompareTables.size());
-        System.out.println("waitRemove  "+oldTables.size());
+        System.out.println("waitAddTables  " + waitAddTables.size());
+        System.out.println("waitCompareTables  " + waitCompareTables.size());
+        System.out.println("waitRemove  " + oldTables.size());
         
         //创建表的sql
-        for (String temp : waitAddTables)
-        {
+        for (String temp : waitAddTables) {
             String fileName = outputPath + "//" + temp.toUpperCase() + ".tab";
             String sql = generatorCreateTableSql(temp, conNew);
             FileUtil.writeFile(fileName, sql);
@@ -61,37 +54,33 @@ public class MysqlMgr
         
         //修改表的sql
         int index = 1;
-        for (String temp : waitCompareTables)
-        {
-            System.out.println(index++ + "  " +temp);
+        for (String temp : waitCompareTables) {
+            System.out.println(index++ + "  " + temp);
             
-            if(compareTableIsSame(temp,conNew,conOld)){
+            if (compareTableIsSame(temp, conNew, conOld)) {
                 continue;
             }
             
             String fileName = outputPath + "//" + temp.toUpperCase() + ".sql";
-            String sql = generatorEditTableSql(temp, temp, conNew, conOld);
-            FileUtil.writeFile(fileName, sql);                 
-          /*  if(sql!=null && !sql.trim().equals("")){
-                System.out.println("  " + sql);
-            }*/
+            String sql = generatorEditTableSql(temp, conNew, conOld);
+            FileUtil.writeFile(fileName, sql);
+            /*  if(sql!=null && !sql.trim().equals("")){
+                  System.out.println("  " + sql);
+              }*/
         }
         
         StringBuffer sb = new StringBuffer();
-        for(String temp:oldTables){
-                sb.append(temp+"\n");
+        for (String temp : oldTables) {
+            sb.append(temp + "\n");
         }
-        FileUtil.writeFile(outputPath+"//需要删除的表.sql", sb.toString());
+        FileUtil.writeFile(outputPath + "//需要删除的表.sql", sb.toString());
         
         System.out.println("完成");
-        try
-        {
+        try {
             
             conNew.close();
             conOld.close();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             
         }
     }
@@ -108,29 +97,25 @@ public class MysqlMgr
      * @exception throws [违例类型] [违例说明]
      * @see [类、类#方法、类#成员]
      */
-    public String generatorEditTableSql(String tableName, String tableName2,
-            Connection conNew, Connection oldCon)
-    {
+    public String generatorEditTableSql(String tableName, Connection conNew,
+            Connection oldCon) {
         
-        Map<String, MysqlColumnBean> oldMap = JdbcUtil.queryTableColumns(tableName2,
+        Map<String, MysqlColumnBean> oldMap = JdbcUtil.queryTableColumns(tableName,
                 oldCon);
         Map<String, MysqlColumnBean> newMap = JdbcUtil.queryTableColumns(tableName,
                 conNew);
         
         StringBuffer sql = new StringBuffer();
-        for (String colName : newMap.keySet())
-        {
+        for (String colName : newMap.keySet()) {
             //新增字段
-            if (!oldMap.containsKey(colName))
-            {
-                sql.append("alter table " + tableName2 + " add "
+            if (!oldMap.containsKey(colName)) {
+                sql.append("alter table " + tableName + " add "
                         + getColStr(newMap.get(colName)) + ";\r\n");
-            }
-            else
-            {
-                if (!oldMap.get(colName).toStr().equals(newMap.get(colName).toStr()))
-                {
-                    sql.append("alter table " + tableName2 + " change `"
+            } else {
+                if (!oldMap.get(colName)
+                        .toStr()
+                        .equals(newMap.get(colName).toStr())) {
+                    sql.append("alter table " + tableName + " change `"
                             + colName + "`  " + getColStr(newMap.get(colName))
                             + ";\r\n");
                 }
@@ -138,17 +123,16 @@ public class MysqlMgr
             }
         }
         
-        
-        if(oldMap.size()>0){
-            sql.append("\n\n\n#以下是多出的字段");            
+        if (oldMap.size() > 0) {
+            sql.append("\n\n\n#以下是多出的字段");
         }
         
-        for(String key:oldMap.keySet()){            
-            sql.append("\n\n\n#"+oldMap.get(key).getColumnName());
+        for (String key : oldMap.keySet()) {
+            sql.append("\n\n\n#" + oldMap.get(key).getColumnName());
             
         }
         
-       // System.out.println(sql.toString());
+        // System.out.println(sql.toString());
         return sql.toString();
     }
     
@@ -164,32 +148,30 @@ public class MysqlMgr
      * @exception throws [违例类型] [违例说明]
      * @see [类、类#方法、类#成员]
      */
-    public boolean compareTableIsSame(String tableName, 
-            Connection conNew, Connection oldCon)
-    {
+    public boolean compareTableIsSame(String tableName, Connection conNew,
+            Connection oldCon) {
         
         String newtableSql = MysqlUtil.showCreateTable(conNew, tableName);
         String oldTableSql = MysqlUtil.showCreateTable(oldCon, tableName);
         
-       if(newtableSql.equalsIgnoreCase(oldTableSql)){
-           return true;
-       }
+        if (newtableSql.equalsIgnoreCase(oldTableSql)) {
+            return true;
+        }
         
         return false;
     }
     
-    public String getColStr(MysqlColumnBean tempBean)
-    {
+    public String getColStr(MysqlColumnBean tempBean) {
         
         StringBuffer sb = new StringBuffer();
         sb = new StringBuffer();
         sb.append("`" + tempBean.getColumnName() + "`");
         sb.append(" " + tempBean.getTypeName());
         
-        if("datetime".equalsIgnoreCase(tempBean.getTypeName())  
-        		|| "date".equalsIgnoreCase(tempBean.getTypeName()) ){
-        	
-        } else if (tempBean.getScale() != 0 ){
+        if ("datetime".equalsIgnoreCase(tempBean.getTypeName())
+                || "date".equalsIgnoreCase(tempBean.getTypeName())) {
+            
+        } else if (tempBean.getScale() != 0) {
             sb.append("(" + tempBean.getSize() + "," + tempBean.getScale()
                     + ")");
             
@@ -198,16 +180,15 @@ public class MysqlMgr
             
         }
         
-        if (!tempBean.getNullable())
-        {
+        if (!tempBean.getNullable()) {
             sb.append(" NOT NULL");
         }
-        if (tempBean.getAutoIncrement())
-        {
+        if (tempBean.getAutoIncrement()) {
             sb.append(" AUTO_INCREMENT");
         }
         
-        return sb.toString();
+        return sb.toString().toUpperCase();
+        
     }
     
     /**
@@ -222,21 +203,21 @@ public class MysqlMgr
      * @exception throws [违例类型] [违例说明]
      * @see [类、类#方法、类#成员]
      */
-    public String generatorCreateTableSql(String tableName, Connection conNew)
-    {
+    public String generatorCreateTableSql(String tableName, Connection conNew) {
         String sql = MysqlUtil.showCreateTable(conNew, tableName);
         
         System.out.println(sql);
         return sql;
     }
     
-    public static void main(String[] args)
-    {
-        String url = "jdbc:mysql://127.0.0.1:3306/data1?user=test&password=1234";
-        String url2 = "jdbc:mysql://127.0.0.1:3306/data2?user=test&password=1234";
-//        String url = "jdbc:mysql://183.230.40.64:3306/matdb_test?user=mattest&password=HUw21z$jzs";
+    public static void main(String[] args) {
+        //本地数据库
+        String url = "jdbc:mysql://127.0.0.1:3306/yufex_wtms_db?user=root&password=123456";
+        
+        //正式环境数据库
+        String url2 = "jdbc:mysql://127.0.0.1:3306/zs_wtms?user=root&password=123456";
         Connection connection = JdbcUtil.connect(url);
         
-        new MysqlMgr().compareDb(url, url2, "D:\\outputSql2");
+        new MysqlMgr().compareDb(url, url2, "D:\\_outputSql2");
     }
 }

@@ -56,7 +56,7 @@ public class JdbcUtil
         return con;
     }
     
-    public static List queryAllTables(Connection con)
+    public static List<String> queryAllTables(Connection con)
     {
         List<String> list = new ArrayList<String>();
         
@@ -136,7 +136,7 @@ public class JdbcUtil
                 mysqlColumnBean.setNullable(nullable);
                 mysqlColumnBean.setAutoIncrement(isAutoIncre);
                 
-                list.put(colname, mysqlColumnBean);
+                list.put(colname.toUpperCase(), mysqlColumnBean);
             }
         }
         catch (SQLException e)
